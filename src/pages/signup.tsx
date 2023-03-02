@@ -30,13 +30,13 @@ export default function SignUp() {
             .
           </p>
 
-          <form className="mb-8">
+          <form className="mb-8" action="/api/signup" method="post">
             <div className="mb-4">
               <label className="block font-bold mb-1">Name:</label>
               <input
                 name="name"
                 type="text"
-                placeholder="Lucas Castro"
+                placeholder="John Doe"
                 className="block w-full bg-white rounded p-2 border"
                 required
               />

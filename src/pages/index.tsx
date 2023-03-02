@@ -1,5 +1,8 @@
 import Head from "next/head";
 import Link from 'next/link';
+import { GetServerSideProps } from "next";
+
+import trinsic from "@/services/trinsic";
 
 export default function Home() {
   return (
