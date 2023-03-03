@@ -1,7 +1,18 @@
 import Head from "next/head";
 import Link from 'next/link';
+import { useRouter } from "next/router";
+
+import oidc from "@/services/oidc";
 
 export default function SignIn() {
+  const router = useRouter();
+
+  async function login() {
+    const request = await oidc.createSigninRequest({});
+    console.log(request);
+    window.location.assign(request.url);
+  }
+
   return (
     <>
       <Head>
@@ -16,18 +27,10 @@ export default function SignIn() {
           <hr className="mb-4" />
 
           <p className="text-gray-700 text-lg mb-4">
-            Open your SSI wallet application and scan the QR Code below to complete with the sign in process.
+            You will be requested to present your credential by clicking the button below.
           </p>
 
-          <p className="text-gray-700 text-lg mb-4">
-            You will need to scan this code with a SSI wallet such as {' '}
-            <a className="text-blue-600 hover:underline" href="https://trinsic.id/trinsic-wallet/" target="_blank" rel="noreferrer">
-              Trinsic Wallet
-            </a>
-            .
-          </p>
-
-          <button className="block w-full rounded p-2 text-center bg-blue-600 font-bold text-white transition hover:brightness-90 mb-4">Show Code</button>
+          <button className="block w-full rounded p-2 text-center bg-blue-600 font-bold text-white transition hover:brightness-90 mb-4" onClick={login}>Sign in with email</button>
 
           <Link href="/" className="text-blue-600 hover:underline">
             Go back
