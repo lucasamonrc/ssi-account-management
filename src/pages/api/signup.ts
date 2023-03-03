@@ -19,8 +19,9 @@ export default async function handler(request: NextApiRequest, response: NextApi
 
   await trinsic.credential().send(SendRequest.fromPartial({
     email: body.email,
+    sendNotification: true,
     documentJson: issueResponse.documentJson ?? "",
   }));
 
-  response.redirect(302, '/');
+  return response.redirect(302, '/signup?success=true');
 }

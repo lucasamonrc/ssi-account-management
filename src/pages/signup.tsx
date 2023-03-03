@@ -1,14 +1,23 @@
-/* eslint-disable @next/next/no-img-element */
+import { SignUpModal } from "@/components/SignUpModal";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from 'next/link';
+import { useState } from "react";
 
+interface SignUpProps {
+  success?: boolean;
+}
 
-export default function SignUp() {
+export default function SignUp({ success }: SignUpProps) {
+  const [isOpen, setIsOpen] = useState(!!success);
+
   return (
     <>
       <Head>
         <title>Sign Up | SSI Account Management</title>
       </Head>
+
+      <SignUpModal isOpen={isOpen} setIsOpen={setIsOpen} />
       
       <div className="w-full h-screen bg-gray-200 flex justify-center items-center">
         <main className="w-1/3 bg-white px-8 py-12 rounded shadow">
@@ -22,14 +31,6 @@ export default function SignUp() {
             Fill the forms below to get a verifiable credential containing you account information to sign in.
           </p>
 
-          <p className="text-gray-700 text-lg mb-8">
-            You will need to save this credential in a SSI wallet such as {' '}
-            <a className="text-blue-600 hover:underline" href="https://trinsic.id/trinsic-wallet/" target="_blank" rel="noreferrer">
-              Trinsic Wallet
-            </a>
-            .
-          </p>
-
           <form className="mb-8" action="/api/signup" method="post">
             <div className="mb-4">
               <label className="block font-bold mb-1">Name:</label>
@@ -39,6 +40,7 @@ export default function SignUp() {
                 placeholder="John Doe"
                 className="block w-full bg-white rounded p-2 border"
                 required
+                disabled={success}
               />
             </div>
 
@@ -50,6 +52,7 @@ export default function SignUp() {
                 placeholder="name@domain.com"
                 className="block w-full bg-white rounded p-2 border"
                 required
+                disabled={success}
               />
             </div>
 
@@ -68,4 +71,18 @@ export default function SignUp() {
       </div>
     </>
   );
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  if (query.success) {
+    return {
+      props: {
+        success: true,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  }
 }
