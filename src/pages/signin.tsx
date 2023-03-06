@@ -1,16 +1,10 @@
+import auth from "@/services/auth";
 import Head from "next/head";
 import Link from 'next/link';
-import { useRouter } from "next/router";
-
-import oidc from "@/services/oidc";
 
 export default function SignIn() {
-  const router = useRouter();
-
   async function login() {
-    const request = await oidc.createSigninRequest({});
-    console.log(request);
-    window.location.assign(request.url);
+    auth.login();
   }
 
   return (
