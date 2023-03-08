@@ -33,10 +33,6 @@ export default function Profile({ user }: ProfileProps) {
     }
   }
 
-  async function handleVerifyAdmin() {
-    
-  }
-
   async function logout() {
     destroyCookie(undefined, appOptions.cookieName);
     Router.push('/');
@@ -112,12 +108,6 @@ export default function Profile({ user }: ProfileProps) {
               />
             </div>
           </section>
-          <button
-            className={`mb-2 block w-full p-2 rounded ${isLoading ? `bg-white border border-gray-600 text-gray-600` : `bg-blue-600 text-white hover:brightness-90`} font-bold transition`}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Verifying...' : 'Verify Admin'}
-          </button>
           <button className="text-blue-600 hover:underline" onClick={logout}>Sign out</button>
         </main>
       </div>
