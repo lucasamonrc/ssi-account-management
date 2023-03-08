@@ -1,11 +1,10 @@
 import Head from "next/head";
 import Link from 'next/link';
 
-import auth from "@/services/auth";
 
 export default function Home() {
   async function login() {
-    auth.login();
+    console.log('login');
   }
 
   return (
