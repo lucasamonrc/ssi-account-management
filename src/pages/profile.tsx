@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { appOptions } from "@/config/env";
 import api from "@/services/api";
-import oidc from "@/services/oidc";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { destroyCookie, parseCookies } from "nookies";
@@ -34,11 +33,12 @@ export default function Profile({ user }: ProfileProps) {
     }
   }
 
-  async function handleVerifyAdmin() {}
+  async function handleVerifyAdmin() {
+    
+  }
 
   async function logout() {
     destroyCookie(undefined, appOptions.cookieName);
-    await oidc.createSignoutRequest({})
     Router.push('/');
   }
   

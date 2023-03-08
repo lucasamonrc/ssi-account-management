@@ -1,12 +1,13 @@
 import Head from "next/head";
 import { useEffect } from "react";
 import { AxiosError } from "axios";
-import { setCookie } from 'nookies';
+import { parseCookies, setCookie } from 'nookies';
 import Router from "next/router";
 
 import api from "@/services/api";
 import oidc from "@/services/oidc";
 import { appOptions } from "@/config/env";
+import { GetServerSideProps } from "next";
 
 export default function Verify() {
   useEffect(() => {
@@ -56,4 +57,34 @@ export default function Verify() {
       </div>
     </>
   );
+}
+
+
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { [appOptions.cookieName]: token } = parseCookies(context);
+
+  if (!!token) {
+    return {
+      redirect: {
+        destination: '/profile',
+        permanent: false,
+      },
+    };
+  }
+
+  const query = context.query;
+  
+  if (Object.keys(query).length === 0) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {}
+  };
 }

@@ -7,11 +7,6 @@ export default function Home() {
   async function login() {
     try {
       const request = await oidc.createSigninRequest({});
-      console.log(
-        "signin request",
-        request,
-        "<a href='" + request.url + "'>Go signing</a>"
-      );
       window.location.replace(request.url);
     } catch (error) {
       alert((error as any).message)
