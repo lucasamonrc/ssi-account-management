@@ -1,33 +1,18 @@
 import { CredentialDerivedProof } from "@/models/credential";
-import auth from "@/services/auth";
+import api from "@/services/api";
+import auth, { oidc } from "@/services/auth";
 import Head from "next/head";
 import { useEffect } from "react";
 
 export default function Auth() {
   useEffect(() => {
     async function verify() {
-      const url = window.location.href;
-      console.log(url);
+      const url = window.location.toString();
 
-      // try {
-        await auth.signinRedirect();
-      // } catch (error) {}
+      const response = await oidc.processSigninResponse(url);
 
-      const user = await auth.getUser();
-      
-      if (user && user.profile._vp_token) {
-        const credential = user.profile._vp_token as CredentialDerivedProof;
-        console.log(credential);
-
-        //! Uncomment this, and comment the previous line to test the verification actually works.
-        // const verifyResp = await verifyCredentialAsync({
-        //     derivedProof: {
-        //         ...credential,
-        //         proof: { ...credential.proof, nonce: "" },
-        //     },
-        // });
-      
-      }
+      console.log(response);
+    
     }
 
     verify();

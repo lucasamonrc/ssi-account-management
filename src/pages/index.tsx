@@ -1,10 +1,13 @@
 import Head from "next/head";
 import Link from 'next/link';
-import { GetServerSideProps } from "next";
 
-import trinsic from "@/services/trinsic";
+import auth from "@/services/auth";
 
 export default function Home() {
+  async function login() {
+    auth.login();
+  }
+
   return (
     <>
       <Head>
@@ -32,9 +35,9 @@ export default function Home() {
               Sign Up for a Credential
           </Link>
 
-          <Link href="/signin" className="block w-full rounded p-2 text-center bg-blue-600 font-bold text-white transition hover:brightness-90">
+          <button onClick={login} className="block w-full rounded p-2 text-center bg-blue-600 font-bold text-white transition hover:brightness-90">
               Sign In with a Credential
-          </Link>
+          </button>
         </main>
       </div>
     </>

@@ -1,11 +1,12 @@
-import { Log, OidcClientSettings, User, UserManager} from 'oidc-client-ts';
+import { Log, OidcClient, OidcClientSettings, User, UserManager} from 'oidc-client-ts';
 
 const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
 
-const settings: OidcClientSettings = {
+const settings = {
   authority: 'https://connect.trinsic.cloud',
   client_id: 'ssi-account-manager',
   redirect_uri: `${baseUrl}/auth`,
+  silent_redirect_uri: `${baseUrl}/profile`,  
   post_logout_redirect_uri: `${baseUrl}/`,
   response_type: 'code',
   scope: 'openid',
@@ -28,10 +29,14 @@ class AuthService {
 
   public getUser(): Promise<User | null> {
     return this.userManager.getUser();
-  }
+}
 
   public login(): Promise<void> {
-      return this.userManager.signinRedirect();
+    return this.userManager.signinRedirect();
+  }
+
+  public renewToken(): Promise<User | null> {
+    return this.userManager.signinSilent();
   }
 
   public logout(): Promise<void> {
@@ -45,5 +50,7 @@ class AuthService {
 }
 
 const auth = new AuthService(settings);
+
+export const oidc = new OidcClient(settings);
 
 export default auth;
