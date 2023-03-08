@@ -20,7 +20,7 @@ export default function Verify() {
         
         const { data } = await api.post('/verify', { proof });
 
-        setCookie(undefined, 'ssi-account-management.token', data.token, {
+        setCookie(undefined, appOptions.cookieName, data.token, {
           maxAge: appOptions.cookieMaxAge, // 30 days
         })
 

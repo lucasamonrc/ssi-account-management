@@ -1,6 +1,7 @@
 export const appOptions = {
   baseUrl: process.env.BASE_URL ?? 'http://localhost:3000',
   jwtSecret: process.env.JWT_SECRET ?? '',
+  cookieName: 'ssi-account-management.token',
   cookieMaxAge: 60 * 60 * 24 * 7, // 7 days
 }
 

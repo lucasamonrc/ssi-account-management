@@ -25,7 +25,7 @@ export default async function handler(request: NextApiRequest, response: NextApi
     return response.status(401).json({ isValid: false, message: 'Invalid proof' });
   }
 
-  const token = jwt.sign({ credentials: proof.credentialSubject }, appOptions.jwtSecret);
+  const token = jwt.sign({ credentials: proof.credentialSubject, proof }, appOptions.jwtSecret);
 
   return response.status(200).json({ token });
 }
