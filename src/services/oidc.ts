@@ -7,7 +7,7 @@ const config: OidcClientSettings = {
   client_id: oidcOptions.clientId,
   response_type: oidcOptions.responseType,
   scope: oidcOptions.scope,
-  redirect_uri: `${appOptions.baseUrl}/auth/callback`,
+  redirect_uri: `${appOptions.baseUrl}/verify`,
   post_logout_redirect_uri: `${appOptions.baseUrl}/`,
   extraQueryParams: {
     "trinsic:ecosystem": trinsicOptions.ecosystem,

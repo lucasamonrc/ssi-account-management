@@ -1,10 +1,22 @@
 import Head from "next/head";
 import Link from 'next/link';
 
+import oidc from "@/services/oidc";
 
 export default function Home() {
   async function login() {
-    console.log('login');
+    try {
+      const request = await oidc.createSigninRequest({});
+      console.log(
+        "signin request",
+        request,
+        "<a href='" + request.url + "'>Go signing</a>"
+      );
+      window.location.replace(request.url);
+    } catch (error) {
+      alert((error as any).message)
+      console.log(error)
+    }
   }
 
   return (

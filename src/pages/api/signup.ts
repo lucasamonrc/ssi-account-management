@@ -63,5 +63,5 @@ export default async function handler(request: NextApiRequest, response: NextApi
     return response.status(500).json({ success: false, error });
   }
 
-  return response.status(201).json({ success: true, documentJson: 'issueResponse.documentJson' });
+  return response.status(201).json({ success: true });
 }
