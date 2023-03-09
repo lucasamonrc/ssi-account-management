@@ -1,7 +1,8 @@
+import { trinsicOptions } from '@/config/env';
 import { TrinsicService } from '@trinsic/trinsic';
 
 const trinsic = new TrinsicService({ 
-  authToken: process.env.TRINSIC_AUTH_TOKEN as string 
+  authToken: trinsicOptions.authToken,
 });
 
 export default trinsic;
