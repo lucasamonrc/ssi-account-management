@@ -1,6 +1,42 @@
+/* eslint-disable @next/next/no-img-element */
+import { appOptions } from "@/config/env";
+import api from "@/services/api";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
+import { destroyCookie, parseCookies } from "nookies";
+import { useState } from "react";
+import Router from 'next/router';
 
-export default function Profile() {
+interface User {
+  memberId: string;
+  name: string;
+  pictureUrl?: string;
+  email: string;
+  role: number;
+}
+
+interface ProfileProps {
+  user: User;
+}
+
+export default function Profile({ user }: ProfileProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  function getRole(role: number) {
+    switch (role) {
+      case 2:
+        return 'Admin';
+      case 1:
+        return 'Moderator';
+      default:
+        return 'Member';
+    }
+  }
+
+  async function logout() {
+    destroyCookie(undefined, appOptions.cookieName);
+    Router.push('/');
+  }
   
   return (
     <>
@@ -20,13 +56,21 @@ export default function Profile() {
           </p>
 
           <section className="mb-8">
+            {!!user.pictureUrl && (
+              <img 
+                src={"https://www.github.com/lucasamonrc.png"} 
+                alt=""
+                className="block rounded-full w-[200px] h-[200px] mx-auto"
+              />
+            )}
+
             <div className="mb-4">
-              <label className="block font-bold mb-1">Account ID:</label>
+              <label className="block font-bold mb-1">Member ID:</label>
               <input
-                name="id"
+                name="memberId"
                 type="text"
-                value={1234}
-                className="block w-full bg-gray-100 rounded p-2 border"
+                className="block w-full bg-white rounded p-2 border"
+                value={user.memberId}
                 disabled
               />
             </div>
@@ -36,8 +80,8 @@ export default function Profile() {
               <input
                 name="name"
                 type="text"
-                value={"username"}
-                className="block w-full bg-gray-100 rounded p-2 border"
+                className="block w-full bg-white rounded p-2 border"
+                value={user.name}
                 disabled
               />
             </div>
@@ -47,16 +91,51 @@ export default function Profile() {
               <input
                 name="email"
                 type="email"
-                value={"name@mail.com"}
-                className="block w-full bg-gray-100 rounded p-2 border"
+                className="block w-full bg-white rounded p-2 border"
+                value={user.email}
+                disabled
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block font-bold mb-1">Role:</label>
+              <input
+                name="role"
+                type="text"
+                className="block w-full bg-white rounded p-2 border"
+                value={getRole(user.role)}
                 disabled
               />
             </div>
           </section>
-
-          <button className="text-blue-600 hover:underline">Sign out</button>
+          <button className="text-blue-600 hover:underline" onClick={logout}>Sign out</button>
         </main>
       </div>
     </>
   );
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { [appOptions.cookieName]: token } = parseCookies(context);
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  const { data } = await api.get<User>('/user', {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
+  return {
+    props: {
+      user: data,
+    }
+  };
 }

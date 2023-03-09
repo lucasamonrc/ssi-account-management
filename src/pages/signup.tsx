@@ -1,23 +1,52 @@
-import { SignUpModal } from "@/components/SignUpModal";
-import { GetServerSideProps } from "next";
+import { AxiosError } from "axios";
 import Head from "next/head";
 import Link from 'next/link';
+import { useRouter } from "next/router";
 import { useState } from "react";
 
-interface SignUpProps {
-  success?: boolean;
+import api from "@/services/api";
+
+interface SignUpFormData {
+  name: string;
+  email: string;
+  role: number;
+  pictureUrl?: string;
 }
 
-export default function SignUp({ success }: SignUpProps) {
-  const [isOpen, setIsOpen] = useState(!!success);
+export default function SignUp() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<SignUpFormData>({
+    name: '',
+    email: '',
+    role: 0,
+  });
+
+  const router = useRouter();
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsLoading(true);
+    
+    try {
+      await api.post('/signup', formData);
+      alert('Credential issued successfully!');
+      router.push('/');
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.errors);
+      } else {
+        alert((error as any).message);
+      }
+      console.error(error)
+    }
+    setIsLoading(false);
+  }
 
   return (
     <>
       <Head>
         <title>Sign Up | SSI Account Management</title>
       </Head>
-
-      <SignUpModal isOpen={isOpen} setIsOpen={setIsOpen} />
       
       <div className="w-full h-screen bg-gray-200 flex justify-center items-center">
         <main className="w-1/3 bg-white px-8 py-12 rounded shadow">
@@ -31,7 +60,7 @@ export default function SignUp({ success }: SignUpProps) {
             Fill the forms below to get a verifiable credential containing you account information to sign in.
           </p>
 
-          <form className="mb-8" action="/api/signup" method="post">
+          <form className="mb-8" onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block font-bold mb-1">Name:</label>
               <input
@@ -39,8 +68,9 @@ export default function SignUp({ success }: SignUpProps) {
                 type="text"
                 placeholder="John Doe"
                 className="block w-full bg-white rounded p-2 border"
+                value={formData.name}
+                onChange={(event) => setFormData({ ...formData, name: event.target.value })}
                 required
-                disabled={success}
               />
             </div>
 
@@ -51,16 +81,45 @@ export default function SignUp({ success }: SignUpProps) {
                 type="email"
                 placeholder="name@domain.com"
                 className="block w-full bg-white rounded p-2 border"
+                value={formData.email}
+                onChange={(event) => setFormData({ ...formData, email: event.target.value })}
                 required
-                disabled={success}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block font-bold mb-1">Role:</label>
+              <select
+                name="role"
+                className="block w-full bg-white rounded p-2 border"
+                value={formData.role.toString()} 
+                onChange={(event) => setFormData({ ...formData, role: Number(event.target.value) })}
+                required
+              >
+                <option value="0">Member</option>
+                <option value="1">Moderator</option>
+                <option value="2">Admin</option>
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block font-bold mb-1">Picture:</label>
+              <input
+                name="pictureUrl"
+                type="url"
+                placeholder="http://example.com/image.png"
+                className="block w-full bg-white rounded p-2 border"
+                value={formData.pictureUrl || ''}
+                onChange={(event) => setFormData({ ...formData, pictureUrl: event.target.value })}
               />
             </div>
 
             <button
               type="submit"
-              className="block w-full p-2 rounded bg-blue-600 text-white font-bold hover:brightness-90 transition"
+              className={`block w-full p-2 rounded ${isLoading ? `bg-white border border-gray-600 text-gray-600` : `bg-blue-600 text-white hover:brightness-90`} font-bold transition`}
+              disabled={isLoading}
             >
-              Issue
+              {isLoading ? 'Issuing...' : 'Submit'}
             </button>
           </form>
 
@@ -71,18 +130,4 @@ export default function SignUp({ success }: SignUpProps) {
       </div>
     </>
   );
-}
-
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  if (query.success) {
-    return {
-      props: {
-        success: true,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  }
 }
